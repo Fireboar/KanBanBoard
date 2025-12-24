@@ -1,32 +1,28 @@
 package ch.hslu.kanbanboard
 
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.safeContentPadding
-import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
-import androidx.compose.runtime.*
-import androidx.compose.ui.Alignment
-import androidx.compose.ui.Modifier
-import ch.hslu.kanbanboard.view.task.addTaskScreen.AddTaskScreen
+import androidx.compose.runtime.Composable
+import ch.hslu.kanbanboard.view.task.kanBanScreen.KanbanScreen
 import ch.hslu.kanbanboard.viewmodel.TaskViewModel
-import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
-
-import kanbanboard.composeapp.generated.resources.Res
-import kanbanboard.composeapp.generated.resources.compose_multiplatform
 
 @Composable
 @Preview
 fun App() {
     val taskViewModel = TaskViewModel()
+
+    // Beispiel-Tasks
+    for (i in 1..15) {
+        taskViewModel.addTask(
+            title = "Task $i",
+            description = "Beschreibung für Task $i",
+            dueDate = "31.12.2025",
+            dueTime = "18:00",
+            status = "To Do")
+    }
+
     MaterialTheme {
-        AddTaskScreen(taskViewModel)
+        KanbanScreen(taskViewModel)
     }
 }
 
