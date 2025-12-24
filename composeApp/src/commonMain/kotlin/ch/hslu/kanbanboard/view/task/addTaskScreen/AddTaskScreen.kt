@@ -2,7 +2,9 @@ package ch.hslu.kanbanboard.view.task.addTaskScreen
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -12,7 +14,7 @@ import ch.hslu.kanbanboard.view.task.taskForm.TaskForm
 import ch.hslu.kanbanboard.viewmodel.TaskViewModel
 
 @Composable
-fun AddTaskScreen(taskViewModel: TaskViewModel) {
+fun AddTaskScreen(taskViewModel: TaskViewModel, paddingValues: PaddingValues) {
     Box(
         modifier = Modifier
             .fillMaxSize(),
@@ -21,6 +23,7 @@ fun AddTaskScreen(taskViewModel: TaskViewModel) {
         Column(
             modifier = Modifier
                 .widthIn(max = 480.dp)
+                .padding(paddingValues)
         ) {
             TaskForm(
                 taskViewModel = taskViewModel,

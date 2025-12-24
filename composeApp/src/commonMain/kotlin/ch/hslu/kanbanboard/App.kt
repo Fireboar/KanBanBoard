@@ -2,7 +2,7 @@ package ch.hslu.kanbanboard
 
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
-import ch.hslu.kanbanboard.view.task.kanBanScreen.KanbanScreen
+import ch.hslu.kanbanboard.view.Navigation
 import ch.hslu.kanbanboard.viewmodel.TaskViewModel
 import org.jetbrains.compose.ui.tooling.preview.Preview
 
@@ -22,8 +22,9 @@ fun App() {
     }
 
     MaterialTheme {
-        KanbanScreen(taskViewModel)
+        Navigation(taskViewModel)
     }
+
 }
 
 
