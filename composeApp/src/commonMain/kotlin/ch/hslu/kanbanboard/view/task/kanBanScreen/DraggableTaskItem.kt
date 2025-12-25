@@ -34,12 +34,17 @@ fun DraggableTaskItem(
     task: Task,
     columnWidthDp: Dp,
     onDelete: () -> Unit,
-    onMove: (targetStatus: String) -> Unit
+    onMove: (targetStatus: String) -> Unit,
+    onClick: () -> Unit
 ) {
     var offset by remember { mutableStateOf(Offset.Zero) }
 
     Card(
         modifier = Modifier
+            .combinedClickable(
+                onClick = onClick,
+                onLongClick = null
+            )
             .fillMaxWidth()
             .offset { IntOffset(offset.x.roundToInt(), offset.y.roundToInt()) }
             .pointerInput(task.id) {

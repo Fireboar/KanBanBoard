@@ -10,9 +10,10 @@ import ch.hslu.kanbanboard.view.bars.BottomNavigationBar
 import ch.hslu.kanbanboard.view.bars.TopBar
 import ch.hslu.kanbanboard.view.task.addTaskScreen.AddTaskScreen
 import ch.hslu.kanbanboard.view.task.kanBanScreen.KanbanScreen
+import ch.hslu.kanbanboard.view.task.taskDetailScreen.TaskDetailScreen
 import ch.hslu.kanbanboard.viewmodel.TaskViewModel
 
-enum class ScreenType { KANBAN, ADDTASK}
+enum class ScreenType { KANBAN, ADDTASK, TASKDETAIL}
 
 @Composable
 fun Navigation(taskViewModel: TaskViewModel) {
@@ -20,8 +21,11 @@ fun Navigation(taskViewModel: TaskViewModel) {
         mutableStateOf(ScreenType.KANBAN)
     }
 
-    fun navigateTo(screen: ScreenType) {
+    var currentTaskId by rememberSaveable { mutableStateOf<Long?>(null) }
+
+    fun navigateTo(screen: ScreenType, taskId: Long? = null) {
         currentScreen = screen
+        currentTaskId = taskId
     }
 
     Scaffold(
@@ -29,6 +33,7 @@ fun Navigation(taskViewModel: TaskViewModel) {
             val screenTitle = when (currentScreen) {
                 ScreenType.KANBAN -> "Mein Kanban Board"
                 ScreenType.ADDTASK -> "Aufgabe hinzufügen"
+                ScreenType.TASKDETAIL -> "Task Detail"
             }
             if(currentScreen != ScreenType.KANBAN){
                 TopBar(screenTitle)
@@ -44,16 +49,26 @@ fun Navigation(taskViewModel: TaskViewModel) {
         }
     ) { paddingValues ->
         when (currentScreen) {
-
             ScreenType.KANBAN -> KanbanScreen(
                 taskViewModel = taskViewModel,
-                paddingValues = paddingValues
+                paddingValues = paddingValues,
+                onTaskClick = { task -> navigateTo(ScreenType.TASKDETAIL, task.id) }
             )
 
             ScreenType.ADDTASK -> AddTaskScreen(
                 taskViewModel = taskViewModel,
                 paddingValues = paddingValues
             )
+
+            ScreenType.TASKDETAIL -> currentTaskId?.let { taskId ->
+                TaskDetailScreen(
+                    taskId = taskId,
+                    taskViewModel = taskViewModel,
+                    paddingValues = paddingValues,
+                    onNavigateBack = { navigateTo(ScreenType.KANBAN) }
+                )
+            }
+
 
         }
     }

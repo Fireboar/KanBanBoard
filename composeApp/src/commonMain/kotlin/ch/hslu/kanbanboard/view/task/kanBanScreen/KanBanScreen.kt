@@ -33,7 +33,8 @@ val statuses = listOf("To Do", "In Progress", "Done")
 @Composable
 fun KanbanScreen(
     taskViewModel: TaskViewModel,
-    paddingValues: PaddingValues
+    paddingValues: PaddingValues,
+    onTaskClick: (Task) -> Unit
 ) {
     val tasks by taskViewModel.tasks.collectAsState()
 
@@ -58,13 +59,6 @@ fun KanbanScreen(
             horizontalArrangement = Arrangement.spacedBy(16.dp)
         ) {
             statuses.forEach { status ->
-                val columnBackgroundColor = when (status) {
-                    "To Do" -> Color(0xFF90CAF9).copy(alpha = 0.3f)
-                    "In Progress" -> Color(0xFFFFF9C4).copy(alpha = 0.3f)
-                    "Done" -> Color(0xFFC8E6C9).copy(alpha = 0.3f)
-                    else -> MaterialTheme.colorScheme.surface
-                }
-
                 val verticalScroll = rememberScrollState()
 
                 val columnModifier = if (isWideScreen) {
@@ -79,7 +73,6 @@ fun KanbanScreen(
 
                 Column(
                     modifier = columnModifier
-                        .background(columnBackgroundColor)
                         .padding(8.dp),
                     verticalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
@@ -114,7 +107,8 @@ fun KanbanScreen(
                                     task = task,
                                     columnWidthDp = columnWidth.takeIf { !isWideScreen } ?: 300.dp,
                                     onDelete = { taskViewModel.deleteTask(task) },
-                                    onMove = { targetStatus -> taskViewModel.moveTask(task, targetStatus) }
+                                    onMove = { targetStatus -> taskViewModel.moveTask(task, targetStatus) },
+                                    onClick = { onTaskClick(task) }
                                 )
                             }
                     }
