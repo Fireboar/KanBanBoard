@@ -78,8 +78,10 @@ fun DraggableTaskItem(
         ) {
             Column(modifier = Modifier.weight(1f)) {
                 Text(task.title, maxLines = 1)
-                Text(task.description, maxLines = 1,
-                    style = MaterialTheme.typography.bodySmall)
+                task.description?.let {
+                    Text(it, maxLines = 1,
+                        style = MaterialTheme.typography.bodySmall)
+                }
                 Text("${task.dueDate} ${task.dueTime}",
                     style = MaterialTheme.typography.bodySmall)
             }

@@ -1,30 +1,44 @@
 package ch.hslu.kanbanboard
 
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import ch.hslu.kanbanboard.cache.AppDatabase
+import ch.hslu.kanbanboard.cache.Database
+import ch.hslu.kanbanboard.cache.provideDbDriver
+import ch.hslu.kanbanboard.network.TaskApi
 import ch.hslu.kanbanboard.view.Navigation
 import ch.hslu.kanbanboard.viewmodel.TaskViewModel
-import org.jetbrains.compose.ui.tooling.preview.Preview
 
 @Composable
-@Preview
 fun App() {
-    val taskViewModel = TaskViewModel()
+    var taskViewModel by remember { mutableStateOf<TaskViewModel?>(null) }
+    var isLoading by remember { mutableStateOf(true) }
 
-    // Beispiel-Tasks
-    for (i in 1..15) {
-        taskViewModel.addTask(
-            title = "Task $i",
-            description = "Beschreibung für Task $i",
-            dueDate = "31.12.2025",
-            dueTime = "18:00",
-            status = "To Do")
+    LaunchedEffect(Unit) {
+        val driver = provideDbDriver(AppDatabase.Schema)
+        val database = Database(driver)
+        val api = TaskApi()
+        val sdk = TaskSDK(database, api)
+        taskViewModel = TaskViewModel(sdk)
+        isLoading = false
     }
 
-    MaterialTheme {
-        Navigation(taskViewModel)
+    if (isLoading) {
+        Text("Loading…")
+    } else {
+        taskViewModel?.let {
+            MaterialTheme {
+                Navigation(taskViewModel = it)
+            }
+        }
     }
-
 }
+
 
 
