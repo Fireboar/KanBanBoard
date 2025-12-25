@@ -24,6 +24,8 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import ch.hslu.kanbanboard.entity.Task
+import ch.hslu.kanbanboard.model.toLocalDateTimeOrNull
 import ch.hslu.kanbanboard.viewmodel.TaskViewModel
 
 val statuses = listOf("To Do", "In Progress", "Done")
@@ -106,25 +108,14 @@ fun KanbanScreen(
                         verticalArrangement = Arrangement.spacedBy(8.dp)
                     ) {
                         tasks.filter { it.status == status }
+                            .sortedBy { it.toLocalDateTimeOrNull() }
                             .forEach { task ->
-                                Card(
-                                    modifier = Modifier
-                                        .padding(bottom = 12.dp)
-                                        .fillMaxWidth(),
-                                    colors = CardDefaults.cardColors(
-                                        containerColor = Color(0xFFE0F7FA)
-                                    )
-                                ) {
-                                    Column(modifier = Modifier.padding(12.dp)) {
-                                        Text(
-                                            text = task.title,
-                                            style = MaterialTheme.typography.titleMedium
-                                        )
-                                        Text(text = task.description)
-                                        Text(text = task.dueDate)
-                                        Text(text = task.dueTime)
-                                    }
-                                }
+                                DraggableTaskItem(
+                                    task = task,
+                                    columnWidthDp = columnWidth.takeIf { !isWideScreen } ?: 300.dp,
+                                    onDelete = { taskViewModel.deleteTask(task) },
+                                    onMove = { targetStatus -> taskViewModel.moveTask(task, targetStatus) }
+                                )
                             }
                     }
 
