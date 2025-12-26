@@ -13,19 +13,25 @@ import ch.hslu.kanbanboard.cache.Database
 import ch.hslu.kanbanboard.cache.provideDbDriver
 import ch.hslu.kanbanboard.network.TaskApi
 import ch.hslu.kanbanboard.view.Navigation
+import ch.hslu.kanbanboard.viewmodel.SyncViewModel
 import ch.hslu.kanbanboard.viewmodel.TaskViewModel
 
 @Composable
 fun App() {
     var taskViewModel by remember { mutableStateOf<TaskViewModel?>(null) }
+    var syncViewModel by remember { mutableStateOf<SyncViewModel?>(null) }
     var isLoading by remember { mutableStateOf(true) }
 
     LaunchedEffect(Unit) {
         val driver = provideDbDriver(AppDatabase.Schema)
         val database = Database(driver)
         val api = TaskApi()
-        val sdk = TaskSDK(database, api)
-        taskViewModel = TaskViewModel(sdk)
+        val serverStatusRepo = ServerStatusRepository()
+        val sdk = TaskSDK(database, api, serverStatusRepo)
+
+        syncViewModel = SyncViewModel(api, sdk, serverStatusRepo)
+        taskViewModel = TaskViewModel(sdk, syncViewModel!!)
+
         isLoading = false
     }
 
@@ -34,7 +40,10 @@ fun App() {
     } else {
         taskViewModel?.let {
             MaterialTheme {
-                Navigation(taskViewModel = it)
+                Navigation(
+                    taskViewModel = it,
+                    syncViewModel = syncViewModel!!
+                )
             }
         }
     }
